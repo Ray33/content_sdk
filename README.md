@@ -2,7 +2,8 @@
 Content SDK to be convenience  layer either for API or for UI Rendering.
 
 The project is divided into 2 moduels:
-1. content_api_sdk - a code that queries Mobitech content API SDK and provide a callback to process the returned java object.
+
+1. __content_api_sdk__ - a code that queries Mobitech content API SDK and provide a callback to process the returned java object.
  Use this module if you want to cusomize the UI layout.
  To use this project, add to your gradle.build the dependency:
 ```java
@@ -26,7 +27,7 @@ Then use it:
             });
 ```
 
-2. content_ui_sdk - a code that queries Mobitech content UI SDK and provide a ready content UI .
+2. __content_ui_sdk__ - a code that queries Mobitech content UI SDK and provide a ready content UI .
 Use this module if you want the SDK to render the UI as well and you are satisfied with the layour.
 The usage of the content UI SDK is demonstrated here:
 https://github.com/Ray33/mobitech_content_ui_sdk_demo
