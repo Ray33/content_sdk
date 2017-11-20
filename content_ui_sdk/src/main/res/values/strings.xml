@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">ContentUI</string>
+
+    <string name="promoted">promoted</string>
+
+    <!-- Pretty Time -->
+    <string name="date_util_unit_second">sec ago</string>
+    <string name="date_util_unit_seconds">sec ago</string>
+    <string name="date_util_unit_minute">min ago</string>
+    <string name="date_util_unit_minutes">mins ago</string>
+    <string name="date_util_suffix" translatable="false">ago</string>
+</resources>

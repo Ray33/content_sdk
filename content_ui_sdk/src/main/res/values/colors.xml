@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="holder_user_news_title">#393838</color>
+    <color name="holder_user_news_date">#747474</color>
+    <color name="holder_user_news_publisher">#747474</color>
+</resources>

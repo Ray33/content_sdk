@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- User News -->
+    <dimen name="holder_user_news_card_radius">4dp</dimen>
+    <dimen name="holder_user_news_card_image">120dp</dimen>
+</resources>
