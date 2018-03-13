@@ -7,7 +7,7 @@ The project is divided into 2 moduels:
  Use this module if you want to cusomize the UI layout.
  To use this project, add to your gradle.build the dependency:
 ```java
-     compile('io.mobitech.content:content_api_sdk:4.1.14@aar') {
+     compile('io.mobitech.content:content_api_sdk:4.1.21@aar') {
         transitive = true
     }
 ```
@@ -16,7 +16,7 @@ Then initiate the module once:
   recommendationService = RecommendationService.build(getApplicationContext(), getBaseContext().getString(R.string.MOBITECH_CONTENT_PUBLISHER_API_KEY), advertId);
 ```
 
-Then use it: 
+Then use it:
 ```java
      recommendationService
                     .getOrganicContent(null, 5, new ContentCallback<List<Document>>() {
