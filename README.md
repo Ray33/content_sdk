@@ -27,6 +27,7 @@ Then use it:
             });
 ```
 A sample usage can be found here: https://github.com/Ray33/mobitech_content_sdk_demo
+
 2. __content_ui_sdk__ - a code that queries Mobitech content UI SDK and provide a ready content UI .
 Use this module if you want the SDK to render the UI as well and you are satisfied with the layour.
 The usage of the content UI SDK is demonstrated here:
