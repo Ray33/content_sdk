@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Locale;
 
 import io.mobitech.content.BuildConfig;
+import io.mobitech.content.R;
 import io.mobitech.content.model.mobitech.ContentResponse;
 import io.mobitech.content.model.mobitech.ContentType;
 import io.mobitech.content.model.mobitech.Document;
@@ -45,8 +46,6 @@ import retrofit2.Retrofit;
 public class RecommendationService {
     private static final String TAG = RecommendationService.class.getSimpleName();
 
-    private static RecommendationService instance;
-
     private static final long YEAR_IN_MILLISECONDS = 365L * 24 * 60 * 60 * 1000;
 
     private static final int DOCUMENTS_DEFAULT_LIMIT = 15;
@@ -64,11 +63,8 @@ public class RecommendationService {
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
     //builder
-    private static Retrofit retrofitMobitechContentBuilder = new Retrofit.Builder()
-            .baseUrl(MobitechContentAPI.CONTENT_BASE_URL)
-            .addConverterFactory(LoganSquareConverterFactory.create())
-            .client(RetrofitUtil.initHttpClient(true))
-            .build();
+    private static Retrofit retrofitMobitechContentBuilder;
+
 
     private static Retrofit retrofitIpifyBuilder = new Retrofit.Builder()
             .baseUrl(IpifyAPI.BASE_URL)
@@ -78,8 +74,10 @@ public class RecommendationService {
 
 
     //api
-    private static MobitechContentAPI mobitechContentAPI = retrofitMobitechContentBuilder.create(MobitechContentAPI.class);
+    private static MobitechContentAPI mobitechContentAPI;
     private static IpifyAPI ipifyAPI = retrofitIpifyBuilder.create(IpifyAPI.class);
+
+
 
     private Context context;
     private String publisherKey;
@@ -91,6 +89,7 @@ public class RecommendationService {
     private boolean isLowEndDevice;
 
     private LowEndDeviceDetectionUtil lowEndDeviceDetectionUtil;
+
 
     /**
      * Build or get existing recommendation service
@@ -171,12 +170,12 @@ public class RecommendationService {
                                                    @Nullable String userAgent, @Nullable String country,
                                                    @Nullable String userIp, @Nullable String locale) {
 
-        instance = new RecommendationService(context, publisherKey, userId, userAgent, country,
-                locale, userIp);
         printVersion();
+        return new RecommendationService(context, publisherKey, userId, userAgent, country,
+                locale, userIp);
 
 
-        return instance;
+
     }
 
     private RecommendationService(Context context, String publisherKey, String userId,
@@ -186,6 +185,8 @@ public class RecommendationService {
         this.publisherKey = publisherKey;
         this.userId = userId;
         this.userAgent = userAgent;
+
+        retrofitMobitechContentBuilder(context);
 
         if (TextUtils.isEmpty(country)) {
             country = GetCountryUtil.getUserCountryByCellularNetwork(context);
@@ -401,6 +402,8 @@ public class RecommendationService {
             limit = DOCUMENTS_DEFAULT_LIMIT;
         }
 
+        resolveIp();
+
         Call<ContentResponse> call = mobitechContentAPI.getDocuments(publisherKey,
                 categories, limit.toString(), userId, userIp,
                 country, channelId, imgWidth, imgHeight,
@@ -464,6 +467,24 @@ public class RecommendationService {
                 Log.e(TAG, "Failed to resolve user ip: " + t.getMessage());
             }
         });
+    }
+
+    private void retrofitMobitechContentBuilder (Context context){
+        retrofitMobitechContentBuilder = new Retrofit.Builder()
+                .baseUrl(resolveMobitechBaseURL(context))
+                .addConverterFactory(LoganSquareConverterFactory.create())
+                .client(RetrofitUtil.initHttpClient(true))
+                .build();
+        mobitechContentAPI = retrofitMobitechContentBuilder.create(MobitechContentAPI.class);
+
+    }
+
+    private static String resolveMobitechBaseURL(Context context) {
+        if (TextUtils.isEmpty(context.getString(R.string.MOBITECH_CONTENT_URL_OVERRIDE))){
+            return MobitechContentAPI.CONTENT_BASE_URL;
+        }else{
+            return context.getString(R.string.MOBITECH_CONTENT_URL_OVERRIDE);
+        }
     }
 
     private static void printVersion() {

@@ -6,7 +6,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.0'
+        classpath 'com.android.tools.build:gradle:3.3.2'
 
 //        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0' //required for bintray https://github.com/bintray/gradle-bintray-plugin
 //        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5' //required for bintray https://github.com/dcendents/android-maven-gradle-plugin
@@ -34,7 +34,7 @@ allprojects {
 
 ext {
     currentVersion = version
-    nextVersion = '4.1.15'
+    nextVersion = '4.3.2'
     bintrayRepo = 'maven'
     bintrayName = 'mobitech-io'
 

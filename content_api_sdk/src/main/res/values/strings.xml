@@ -1,3 +1,4 @@
 <resources>
     <string name="MOBITECH_CONTENT_PUBLISHER_API_KEY" translatable="false"></string>
+    <string name="MOBITECH_CONTENT_URL_OVERRIDE" translatable="false"></string>
 </resources>
