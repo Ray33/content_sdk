@@ -1,6 +1,9 @@
 # content_sdk
 Content SDK to be convenience  layer either for API or for UI Rendering.
 
+<img alt="Maven Central badge" src="https://img.shields.io/badge/maven--central-v4.3.2-blue">
+ 
+
 The project is divided into 2 moduels:
 
 1. __content_api_sdk__ - a code that queries Mobitech content API SDK and provide a callback to process the returned java object.
