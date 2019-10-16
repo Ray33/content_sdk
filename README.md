@@ -1,7 +1,7 @@
 # content_sdk
 Content SDK to be convenience  layer either for API or for UI Rendering.
 
-<img alt="Maven Central badge" src="https://img.shields.io/badge/maven--central-v4.3.2-blue">
+<a href="https://mvnrepository.com/artifact/io.mobitech.content/content_api_sdk"><img alt="Maven Central badge" src="https://img.shields.io/badge/maven--central-v4.3.2-blue"></a>
  
 
 The project is divided into 2 moduels:
