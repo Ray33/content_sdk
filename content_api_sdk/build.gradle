@@ -57,7 +57,7 @@ afterEvaluate {
         publications {
             release(MavenPublication) {
                 from components.release
-                groupId = 'com.coupon'
+                groupId = 'io.mobitech'
                 artifactId = 'content_api_sdk'
                 version = '1.0'
             }
