@@ -1,14 +1,15 @@
 package io.mobitech.content_ui.holders;
 
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
 
 import io.mobitech.content.model.mobitech.Document;
 import io.mobitech.content_ui.R;
 import io.mobitech.content_ui.interfaces.OnItemClickListener;
-import io.mobitech.content_ui.utils.GlideApp;
 import io.mobitech.content_ui.utils.PrettyTime;
 
 /**
@@ -47,11 +48,15 @@ public class UserNewsItemNewAPIHolder extends RecyclerView.ViewHolder {
         });
         if (item.getThumbnails() != null && !item.getThumbnails().isEmpty()) {
 //            Glide.get(itemView.getContext());
-            GlideApp.with(itemView.getContext())
+/*            GlideApp.with(itemView.getContext())
                     .load(item.getThumbnails().get(0).getUrl())
 //                    .dontAnimate()
 //                    .dontTransform()
 //                    .centerCrop()
+                    .into(mNewsImageView);*/
+
+            Glide.with(itemView.getContext())
+                    .load(item.getThumbnails().get(0).getUrl())
                     .into(mNewsImageView);
         }
 

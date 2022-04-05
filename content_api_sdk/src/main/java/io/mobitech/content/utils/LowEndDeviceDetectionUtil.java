@@ -1,8 +1,15 @@
 package io.mobitech.content.utils;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.telephony.TelephonyManager;
+
+import androidx.core.app.ActivityCompat;
 
 /**
  * Utility class to determine if user has a low-end device
@@ -11,7 +18,8 @@ import android.telephony.TelephonyManager;
  */
 
 public class LowEndDeviceDetectionUtil {
-    private Context context;
+    private static final int REQUEST_CODE_PHONE = 111;
+    private final Context context;
 
     public LowEndDeviceDetectionUtil(Context context) {
         this.context = context;
@@ -19,6 +27,7 @@ public class LowEndDeviceDetectionUtil {
 
     /**
      * Determines if user has a low-end device (amount of available RAM is less then 400Mb or network type is 2G)
+     *
      * @return True - if device is low-end
      */
     public boolean isLowEndDevice() {
@@ -36,13 +45,23 @@ public class LowEndDeviceDetectionUtil {
 
     /**
      * Determines user's cellular network type
+     *
      * @return Generation of mobile telecommunications technology
      */
+    @SuppressLint("MissingPermission")
     private String getNetworkClass() {
         TelephonyManager mTelephonyManager = (TelephonyManager)
                 context.getSystemService(Context.TELEPHONY_SERVICE);
-        if (mTelephonyManager != null) {
-            int networkType = mTelephonyManager.getNetworkType();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.READ_PHONE_STATE}, REQUEST_CODE_PHONE);
+            return "Unknown";
+        } else {
+            int networkType;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                networkType = mTelephonyManager.getDataNetworkType();
+            } else {
+                networkType = mTelephonyManager.getNetworkType();
+            }
             switch (networkType) {
                 case TelephonyManager.NETWORK_TYPE_GPRS:
                 case TelephonyManager.NETWORK_TYPE_EDGE:
@@ -64,9 +83,20 @@ public class LowEndDeviceDetectionUtil {
                     return "4G";
                 default:
                     return "Unknown";
+                case TelephonyManager.NETWORK_TYPE_GSM:
+                    break;
+                case TelephonyManager.NETWORK_TYPE_IWLAN:
+                    break;
+                case TelephonyManager.NETWORK_TYPE_NR:
+                    break;
+                case TelephonyManager.NETWORK_TYPE_TD_SCDMA:
+                    break;
+                case TelephonyManager.NETWORK_TYPE_UNKNOWN:
+                    break;
             }
-        } else {
-            return "Unknown";
         }
+        return "Unknown";
     }
+
+
 }

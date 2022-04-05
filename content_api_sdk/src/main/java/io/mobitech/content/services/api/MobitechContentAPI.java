@@ -21,8 +21,6 @@ public interface MobitechContentAPI {
     String TYPE = "type";
     String USER_AGENT = "ua";
 
-    String CONTENT_BASE_URL = "http://api.mobitech-content.xyz";
-
     @GET("/v1.1/{mobitechId}/document/get")
     Call<ContentResponse> getDocuments(
             @Path("mobitechId") String mobitechId,

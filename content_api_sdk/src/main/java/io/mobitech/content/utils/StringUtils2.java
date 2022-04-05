@@ -8,6 +8,8 @@
 
 package io.mobitech.content.utils;
 
+import android.os.Build;
+
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
@@ -106,7 +108,10 @@ public class StringUtils2 {
             return null;
         }
         final Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");//$NON-NLS-1$
-        final String decomposed = Normalizer.normalize(input, Normalizer.Form.NFD);
+        String decomposed = "";
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.GINGERBREAD) {
+            decomposed = Normalizer.normalize(input, Normalizer.Form.NFD);
+        }
         // Note that this doesn't correctly remove ligatures...
         return pattern.matcher(decomposed).replaceAll("");//$NON-NLS-1$
     }
@@ -386,8 +391,10 @@ public class StringUtils2 {
         if (str == null) {
             return null;
         }
-        if (str.isEmpty()) {
-            return EMPTY_STRING_ARRAY;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+            if (str.isEmpty()) {
+                return EMPTY_STRING_ARRAY;
+            }
         }
         final char[] c = str.toCharArray();
         final List<String> list = new ArrayList<String>();

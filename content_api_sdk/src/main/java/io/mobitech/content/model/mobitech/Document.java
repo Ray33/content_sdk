@@ -41,8 +41,6 @@ public class Document implements Serializable, Parcelable
 
     String author = "";
 
-    String authorLogo = "";
-
     List<String> categories = new ArrayList<String>();
 
     List<Object> categoriesEn = new ArrayList<Object>();
@@ -84,7 +82,6 @@ public class Document implements Serializable, Parcelable
         in.readList(this.categories, (java.lang.String.class.getClassLoader()));
         in.readList(this.categoriesEn, (java.lang.Object.class.getClassLoader()));
         this.country = ((String) in.readValue((String.class.getClassLoader())));
-        this.authorLogo = ((String) in.readValue((String.class.getClassLoader())));
     }
 
     public Document() {
@@ -218,14 +215,6 @@ public class Document implements Serializable, Parcelable
         this.country = country;
     }
 
-    public String getAuthorLogo() {
-        return authorLogo;
-    }
-
-    public void setAuthorLogo(String authorLogo) {
-        this.authorLogo = authorLogo;
-    }
-
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeValue(id);
         dest.writeList(thumbnails);
@@ -243,7 +232,6 @@ public class Document implements Serializable, Parcelable
         dest.writeList(categories);
         dest.writeList(categoriesEn);
         dest.writeValue(country);
-        dest.writeValue(authorLogo);
     }
 
     public int describeContents() {

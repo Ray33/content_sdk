@@ -10,6 +10,7 @@ package io.mobitech.content.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -44,11 +45,14 @@ public class ShrdPrfs {
     }
 
     public static synchronized SharedPreferences initialize(Context ctx, String storageKey) {
-        if (storageKey == null || storageKey.isEmpty() || DEFAULT.equalsIgnoreCase(storageKey)) {
-            return PreferenceManager.getDefaultSharedPreferences(ctx);
-        } else {
-            return ctx.getSharedPreferences(storageKey, Context.MODE_PRIVATE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+            if (storageKey == null || storageKey.isEmpty() || DEFAULT.equalsIgnoreCase(storageKey)) {
+                return PreferenceManager.getDefaultSharedPreferences(ctx);
+            } else {
+                return ctx.getSharedPreferences(storageKey, Context.MODE_PRIVATE);
+            }
         }
+        return PreferenceManager.getDefaultSharedPreferences(ctx);
     }
 
     public static <T> void putListObject(Context ctx, String sharedPreferenceKey, List<T> listObj, Class<T> objectClass) {
@@ -100,7 +104,9 @@ public class ShrdPrfs {
     public static void clearObject(Context ctx, String sharedPreferenceKey, String storageKey) {
         SharedPreferences settings = getAppSettings(ctx, storageKey);
         if (settings != null) {
-            settings.edit().clear().apply();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+                settings.edit().clear().apply();
+            }
         }
 
     }
@@ -175,7 +181,9 @@ public class ShrdPrfs {
         if (sharedPreferenceKey == null || getAppSettings(ctx, storageKey) == null) {
             return;
         }
-        getAppSettings(ctx, storageKey).edit().putString(sharedPreferenceKey, value).apply();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+            getAppSettings(ctx, storageKey).edit().putString(sharedPreferenceKey, value).apply();
+        }
     }
 
     public static void remove(Context ctx, String sharedPreferenceKey) {
@@ -186,7 +194,9 @@ public class ShrdPrfs {
         if (sharedPreferenceKey == null || getAppSettings(ctx, storageKey) == null) {
             return;
         }
-        getAppSettings(ctx, storageKey).edit().remove(sharedPreferenceKey).apply();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+            getAppSettings(ctx, storageKey).edit().remove(sharedPreferenceKey).apply();
+        }
     }
 
     public static int getInt(Context ctx, String sharedPreferenceKey) {
@@ -208,7 +218,9 @@ public class ShrdPrfs {
         if (sharedPreferenceKey == null || getAppSettings(ctx, storageKey) == null) {
             return;
         }
-        getAppSettings(ctx, storageKey).edit().putInt(sharedPreferenceKey, value).apply();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+            getAppSettings(ctx, storageKey).edit().putInt(sharedPreferenceKey, value).apply();
+        }
     }
 
     public static long getLong(Context ctx, String sharedPreferenceKey) {
@@ -230,7 +242,9 @@ public class ShrdPrfs {
         if (sharedPreferenceKey == null || getAppSettings(ctx, storageKey) == null) {
             return;
         }
-        getAppSettings(ctx, storageKey).edit().putLong(sharedPreferenceKey, value).apply();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+            getAppSettings(ctx, storageKey).edit().putLong(sharedPreferenceKey, value).apply();
+        }
     }
 
     public static Boolean getBool(Context ctx, String sharedPreferenceKey) {
@@ -247,7 +261,9 @@ public class ShrdPrfs {
 
     public static void putBool(Context ctx, String sharedPreferenceKey, Boolean value, String storageKey) {
         if (getAppSettings(ctx, storageKey) != null && getAppSettings(ctx, storageKey).edit() != null) {
-            getAppSettings(ctx, storageKey).edit().putBoolean(sharedPreferenceKey, value).apply();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+                getAppSettings(ctx, storageKey).edit().putBoolean(sharedPreferenceKey, value).apply();
+            }
         }
     }
 

@@ -2,6 +2,7 @@ package io.mobitech.content_ui;
 
 import android.app.Application;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.provider.Settings;
 import android.util.Log;
 
@@ -45,40 +46,44 @@ public class ContentUIApplication extends Application {
     public void init(final OnLoadCompleteListener onLoadCompleteListener) {
         //callback for user id:
         //Either takes the user's advertiserId or creates a unique ID, if
-        AsyncTask<Void, Void, String> task = new AsyncTask<Void, Void, String>() {
-            @Override
-            protected String doInBackground(Void... params) {
-                try {
-                    AdvertisingIdClient.Info adInfo = AdvertisingIdClient.getAdvertisingIdInfo(ContentUIApplication.this);
-                    if (!adInfo.isLimitAdTrackingEnabled()) {//if user hasn't opt-out
-                        return adInfo.getId();
-                    } else {
-                        //Settings.Secure.ANDROID_ID: A 64-bit number (as a hex string) that is randomly
-                        // generated when the user first sets up the device and should remain
-                        // constant for the lifetime of the user's device.
-                        String android_id = Settings.Secure.getString(ContentUIApplication.this.getContentResolver(),
-                                Settings.Secure.ANDROID_ID);
+        AsyncTask<Void, Void, String> task = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.CUPCAKE) {
+            task = new AsyncTask<Void, Void, String>() {
+                @Override
+                protected String doInBackground(Void... params) {
+                    try {
+                        AdvertisingIdClient.Info adInfo = AdvertisingIdClient.getAdvertisingIdInfo(ContentUIApplication.this);
+                        if (!adInfo.isLimitAdTrackingEnabled()) {//if user hasn't opt-out
+                            return adInfo.getId();
+                        } else {
+                            //Settings.Secure.ANDROID_ID: A 64-bit number (as a hex string) that is randomly
+                            // generated when the user first sets up the device and should remain
+                            // constant for the lifetime of the user's device.
+                            String android_id = Settings.Secure.getString(ContentUIApplication.this.getContentResolver(),
+                                    Settings.Secure.ANDROID_ID);
 
-                        //if ANDROID_ID is unavailable - generate a random ID
-                        return android_id == null ? new UUID(System.currentTimeMillis(), System.currentTimeMillis() * 2).toString() : android_id;
+                            //if ANDROID_ID is unavailable - generate a random ID
+                            return android_id == null ? new UUID(System.currentTimeMillis(), System.currentTimeMillis() * 2).toString() : android_id;
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, e.getMessage(), e);
                     }
-                } catch (Exception e) {
-                    Log.e(TAG, e.getMessage(), e);
+                    //default return is empty, in order to catch issues with user id generation
+                    return "";
                 }
-                //default return is empty, in order to catch issues with user id generation
-                return "";
-            }
 
-            @Override
-            protected void onPostExecute(String advertId) {
-                userID = advertId;
-                //init Mobitech's content SDK
-                recommendationService = RecommendationService.build(getApplicationContext(), getBaseContext().getString(R.string.MOBITECH_CONTENT_PUBLISHER_API_KEY), advertId);
-                onLoadCompleteListener.onLoadComplete();
-            }
+                @Override
+                protected void onPostExecute(String advertId) {
+                    userID = advertId;
+                    //init Mobitech's content SDK
+                    recommendationService = RecommendationService.build(getApplicationContext(), getBaseContext().getString(R.string.MOBITECH_CONTENT_PUBLISHER_API_KEY), advertId);
+                    onLoadCompleteListener.onLoadComplete();
+                }
 
-        };
-        task.execute();
+            };
+            task.execute();
+        }
+
     }
 
     public String getUserID() {

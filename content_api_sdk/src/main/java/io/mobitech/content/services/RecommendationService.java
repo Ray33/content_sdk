@@ -10,10 +10,11 @@ package io.mobitech.content.services;
 
 import android.content.Context;
 import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.github.aurae.retrofit2.LoganSquareConverterFactory;
 
@@ -46,9 +47,15 @@ import retrofit2.Retrofit;
 public class RecommendationService {
     private static final String TAG = RecommendationService.class.getSimpleName();
 
+    private static RecommendationService instance;
+
     private static final long YEAR_IN_MILLISECONDS = 365L * 24 * 60 * 60 * 1000;
 
     private static final int DOCUMENTS_DEFAULT_LIMIT = 15;
+
+    public String contentServerBaseUrl;
+
+    private static final int MAX_REQUEST_RETRIES_NUMBER = 3;
 
 ////////////////////        Uncomment and use it for debug purposes        ////////////////////
 //
@@ -63,21 +70,12 @@ public class RecommendationService {
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
     //builder
-    private static Retrofit retrofitMobitechContentBuilder;
-
-
-    private static Retrofit retrofitIpifyBuilder = new Retrofit.Builder()
-            .baseUrl(IpifyAPI.BASE_URL)
-            .addConverterFactory(LoganSquareConverterFactory.create())
-            .client(RetrofitUtil.initHttpClient(true))
-            .build();
-
+    private Retrofit retrofitMobitechContentBuilder;
+    private Retrofit retrofitIpifyBuilder;
 
     //api
-    private static MobitechContentAPI mobitechContentAPI;
-    private static IpifyAPI ipifyAPI = retrofitIpifyBuilder.create(IpifyAPI.class);
-
-
+    private MobitechContentAPI mobitechContentAPI;
+    private IpifyAPI ipifyAPI;
 
     private Context context;
     private String publisherKey;
@@ -89,7 +87,6 @@ public class RecommendationService {
     private boolean isLowEndDevice;
 
     private LowEndDeviceDetectionUtil lowEndDeviceDetectionUtil;
-
 
     /**
      * Build or get existing recommendation service
@@ -170,12 +167,12 @@ public class RecommendationService {
                                                    @Nullable String userAgent, @Nullable String country,
                                                    @Nullable String userIp, @Nullable String locale) {
 
-        printVersion();
-        return new RecommendationService(context, publisherKey, userId, userAgent, country,
+        instance = new RecommendationService(context, publisherKey, userId, userAgent, country,
                 locale, userIp);
+        printVersion();
 
 
-
+        return instance;
     }
 
     private RecommendationService(Context context, String publisherKey, String userId,
@@ -186,7 +183,13 @@ public class RecommendationService {
         this.userId = userId;
         this.userAgent = userAgent;
 
-        retrofitMobitechContentBuilder(context);
+        contentServerBaseUrl = context.getString(R.string.CONTENT_BASE_URL);
+
+        retrofitMobitechContentBuilder = initializeRetrofitMobitechContentBuilder();
+        retrofitIpifyBuilder = initializeRetrofitIpifyBuilder();
+
+        mobitechContentAPI = retrofitMobitechContentBuilder.create(MobitechContentAPI.class);
+        ipifyAPI = retrofitIpifyBuilder.create(IpifyAPI.class);
 
         if (TextUtils.isEmpty(country)) {
             country = GetCountryUtil.getUserCountryByCellularNetwork(context);
@@ -226,7 +229,7 @@ public class RecommendationService {
     public void getOrganicContent(@Nullable String categories, @Nullable Integer limit,
                                   @NonNull final ContentCallback<List<Document>> contentCallback) {
         getContent(ContentType.ORGANIC, null, null, null,
-                null, categories, limit, contentCallback);
+                null, categories, limit, contentCallback, 0);
     }
 
     /**
@@ -245,7 +248,7 @@ public class RecommendationService {
                                   @Nullable String categories, @Nullable Integer limit,
                                   @NonNull final ContentCallback<List<Document>> contentCallback) {
         getContent(ContentType.ORGANIC, channelId, imgWidth, imgHeight,
-                vendorFilter, categories, limit, contentCallback);
+                vendorFilter, categories, limit, contentCallback, 0);
     }
 
     /**
@@ -258,7 +261,7 @@ public class RecommendationService {
     public void getPromotedContent(@Nullable String categories, @Nullable Integer limit,
                                    @NonNull final ContentCallback<List<Document>> contentCallback) {
         getContent(ContentType.PROMOTED, null, null, null,
-                null, categories, limit, contentCallback);
+                null, categories, limit, contentCallback, 0);
     }
 
     /**
@@ -277,7 +280,7 @@ public class RecommendationService {
                                    @Nullable String categories, @Nullable Integer limit,
                                    @NonNull final ContentCallback<List<Document>> contentCallback) {
         getContent(ContentType.PROMOTED, channelId, imgWidth, imgHeight,
-                vendorFilter, categories, limit, contentCallback);
+                vendorFilter, categories, limit, contentCallback, 0);
     }
 
     /**
@@ -290,7 +293,7 @@ public class RecommendationService {
     public void getVideoContent(@Nullable String categories, @Nullable Integer limit,
                                 @NonNull final ContentCallback<List<Document>> contentCallback) {
         getContent(ContentType.VIEDO, null, null, null,
-                null, categories, limit, contentCallback);
+                null, categories, limit, contentCallback, 0);
     }
 
     /**
@@ -309,7 +312,7 @@ public class RecommendationService {
                                 @Nullable String categories, @Nullable Integer limit,
                                 @NonNull final ContentCallback<List<Document>> contentCallback) {
         getContent(ContentType.VIEDO, channelId, imgWidth, imgHeight,
-                vendorFilter, categories, limit, contentCallback);
+                vendorFilter, categories, limit, contentCallback, 0);
     }
 
     /**
@@ -322,7 +325,7 @@ public class RecommendationService {
     public void getMixedContent(@Nullable String categories, @Nullable Integer limit,
                                 @NonNull final ContentCallback<List<Document>> contentCallback) {
         getContent(ContentType.MIX, null, null, null,
-                null, categories, limit, contentCallback);
+                null, categories, limit, contentCallback, 0);
     }
 
     /**
@@ -341,7 +344,7 @@ public class RecommendationService {
                                 @Nullable String categories, @Nullable Integer limit,
                                 @NonNull final ContentCallback<List<Document>> contentCallback) {
         getContent(ContentType.MIX, channelId, imgWidth, imgHeight,
-                vendorFilter, categories, limit, contentCallback);
+                vendorFilter, categories, limit, contentCallback, 0);
     }
 
     /**
@@ -354,7 +357,7 @@ public class RecommendationService {
     public void getMixedVideoContent(@Nullable String categories, @Nullable Integer limit,
                                      @NonNull final ContentCallback<List<Document>> contentCallback) {
         getContent(ContentType.MIX_VIDEO, null, null, null,
-                null, categories, limit, contentCallback);
+                null, categories, limit, contentCallback, 0);
     }
 
     /**
@@ -373,7 +376,7 @@ public class RecommendationService {
                                      @Nullable String categories, @Nullable Integer limit,
                                      @NonNull final ContentCallback<List<Document>> contentCallback) {
         getContent(ContentType.MIX_VIDEO, channelId, imgWidth, imgHeight,
-                vendorFilter, categories, limit, contentCallback);
+                vendorFilter, categories, limit, contentCallback, 0);
     }
 
     /**
@@ -387,26 +390,28 @@ public class RecommendationService {
      * @param limit             (optional) limit
      * @param contentCallback   (optional) results callback
      */
-    private void getContent(@NonNull ContentType contentType, @Nullable String channelId,
-                            @Nullable Integer imgWidth, @Nullable Integer imgHeight,
-                            @Nullable String vendorFilter, @Nullable String categories,
+    private void getContent(@NonNull final ContentType contentType, @Nullable String channelId,
+                            @Nullable final Integer imgWidth, @Nullable final Integer imgHeight,
+                            @Nullable final String vendorFilter, @Nullable final String categories,
                             @Nullable Integer limit,
-                            @NonNull final ContentCallback<List<Document>> contentCallback) {
+                            @NonNull final ContentCallback<List<Document>> contentCallback, final int retryNumber) {
         //validation & defaults
         if (TextUtils.isEmpty(channelId)) {
-            channelId = "0";
+            channelId = "default";
         }
+
+        final String channelIdFinal = channelId;
 
 
         if (limit == null) {
             limit = DOCUMENTS_DEFAULT_LIMIT;
         }
 
-        resolveIp();
+        final Integer limitFinal = limit;
 
         Call<ContentResponse> call = mobitechContentAPI.getDocuments(publisherKey,
-                categories, limit.toString(), userId, userIp,
-                country, channelId, imgWidth, imgHeight,
+                categories, limitFinal.toString(), userId, userIp,
+                country, channelIdFinal, imgWidth, imgHeight,
                 isLowEndDevice, locale, vendorFilter, contentType.getValue(), userAgent);
 
         call.enqueue(new Callback<ContentResponse>() {
@@ -440,7 +445,16 @@ public class RecommendationService {
 
             @Override
             public void onFailure(@NonNull Call<ContentResponse> call, @NonNull Throwable t) {
-                Log.w(TAG, "Failed to get documents from content server: " + t.getMessage());
+                Log.w(TAG, "Failed to get documents from content server: " + t.getMessage() +
+                        " retry number: " + retryNumber);
+
+                if (retryNumber < MAX_REQUEST_RETRIES_NUMBER) {
+                    getContent(contentType, channelIdFinal, imgWidth, imgHeight, vendorFilter,
+                            categories, limitFinal, contentCallback, retryNumber + 1);
+                } else {
+                    Log.w(TAG, "failed to get any documents from the content server after all hard tries :(");
+                    contentCallback.processResult(new ArrayList<Document>(), context);
+                }
             }
         });
     }
@@ -469,22 +483,22 @@ public class RecommendationService {
         });
     }
 
-    private void retrofitMobitechContentBuilder (Context context){
-        retrofitMobitechContentBuilder = new Retrofit.Builder()
-                .baseUrl(resolveMobitechBaseURL(context))
+    @NonNull
+    private Retrofit initializeRetrofitMobitechContentBuilder() {
+        return new Retrofit.Builder()
+                .baseUrl(contentServerBaseUrl)
                 .addConverterFactory(LoganSquareConverterFactory.create())
                 .client(RetrofitUtil.initHttpClient(true))
                 .build();
-        mobitechContentAPI = retrofitMobitechContentBuilder.create(MobitechContentAPI.class);
-
     }
 
-    private static String resolveMobitechBaseURL(Context context) {
-        if (TextUtils.isEmpty(context.getString(R.string.MOBITECH_CONTENT_URL_OVERRIDE))){
-            return MobitechContentAPI.CONTENT_BASE_URL;
-        }else{
-            return context.getString(R.string.MOBITECH_CONTENT_URL_OVERRIDE);
-        }
+    @NonNull
+    private Retrofit initializeRetrofitIpifyBuilder() {
+        return new Retrofit.Builder()
+                .baseUrl(IpifyAPI.BASE_URL)
+                .addConverterFactory(LoganSquareConverterFactory.create())
+                .client(RetrofitUtil.initHttpClient(true))
+                .build();
     }
 
     private static void printVersion() {

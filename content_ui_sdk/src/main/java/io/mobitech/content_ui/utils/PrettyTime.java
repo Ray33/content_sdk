@@ -3,12 +3,10 @@ package io.mobitech.content_ui.utils;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-
 import io.mobitech.content_ui.R;
 
 public class PrettyTime {

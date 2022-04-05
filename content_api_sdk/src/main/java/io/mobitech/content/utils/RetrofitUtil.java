@@ -1,7 +1,8 @@
 package io.mobitech.content.utils;
 
 import android.net.Uri;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,7 +55,10 @@ public class RetrofitUtil {
 
     public static HashMap<String, String> createQueryMap(@NonNull String urlString, String userIp) {
         Uri uri = Uri.parse(urlString);
-        Set<String> queryParameterNames = uri.getQueryParameterNames();
+        Set<String> queryParameterNames = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
+            queryParameterNames = uri.getQueryParameterNames();
+        }
         HashMap<String, String> queryMap = new HashMap<>();
         for (String queryName : queryParameterNames) {
             String queryParameter = uri.getQueryParameter(queryName);
