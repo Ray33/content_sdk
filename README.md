@@ -11,7 +11,11 @@ The project is divided into 2 moduels:
    this project, add to your gradle.build the dependency:
 
 ```java
-     implementation'com.github.Ray33.content_sdk:content_api_sdk:master-SNAPSHOT'
+        implementation'io.mobitech.content_sdk:content_api_sdk:1.0'
+        OR
+        implementation'com.github.Ray33.content_sdk:content_api_sdk:1.0'
+
+
 ```
 
 Then initiate the module once:
@@ -32,13 +36,15 @@ public void processResult(List<Document> contentResult,Context context){
         });
 ```
 
-
-
 2. __content_ui_sdk__ - a code that queries Mobitech content UI SDK and provide a ready content UI .
    Use this module if you want the SDK to render the UI as well and you are satisfied with the
    layour. The usage of the content UI SDK is demonstrated here:
 
 ```java
-implementation'com.github.Ray33.content_sdk:content_ui_sdk:master-SNAPSHOT'
+        implementation'io.mobitech.content_sdk:content_ui_sdk:1.0'
+        OR
+        implementation'com.github.Ray33.content_sdk:content_ui_sdk:1.0'
+
+
 ```
 
