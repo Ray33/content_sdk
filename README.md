@@ -12,7 +12,9 @@ The project is divided into 2 moduels:
 
 ```java
         implementation'io.mobitech.content_sdk:content_api_sdk:1.0'
-        OR
+
+                                 OR
+
         implementation'com.github.Ray33.content_sdk:content_api_sdk:1.0'
 
 
@@ -21,18 +23,17 @@ The project is divided into 2 moduels:
 Then initiate the module once:
 
 ```java
-  recommendationService=RecommendationService.build(getApplicationContext(),getBaseContext().getString(R.string.MOBITECH_CONTENT_PUBLISHER_API_KEY),advertId);
+recommendationService=RecommendationService.build(getApplicationContext(),getBaseContext().getString(R.string.MOBITECH_CONTENT_PUBLISHER_API_KEY),advertId);
 ```
 
 Then use it:
 
 ```java
-     recommendationService
-        .getOrganicContent(null,5,new ContentCallback<List<Document>>(){
-@Override
-public void processResult(List<Document> contentResult,Context context){
-        //Do something with the documents
-        }
+         recommendationService.getOrganicContent(null,5,new ContentCallback<List<Document>>(){
+            @Override
+            public void processResult(List<Document> contentResult,Context context){
+           //Do something with the documents
+            }
         });
 ```
 
@@ -42,7 +43,9 @@ public void processResult(List<Document> contentResult,Context context){
 
 ```java
         implementation'io.mobitech.content_sdk:content_ui_sdk:1.0'
-        OR
+       
+                                  OR
+        
         implementation'com.github.Ray33.content_sdk:content_ui_sdk:1.0'
 
 
