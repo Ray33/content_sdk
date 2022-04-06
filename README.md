@@ -11,11 +11,11 @@ The project is divided into 2 moduels:
    this project, add to your gradle.build the dependency:
 
 ```java
-        implementation'io.mobitech.content_sdk:content_api_sdk:1.0'
+        implementation'io.mobitech.content_sdk:content_api_sdk:7.0.0'
 
                                  OR
 
-        implementation'com.github.Ray33.content_sdk:content_api_sdk:1.0'
+        implementation'com.github.Ray33.content_sdk:content_api_sdk:7.0.0'
 
 
 ```
@@ -42,11 +42,11 @@ Then use it:
    layour. The usage of the content UI SDK is demonstrated here:
 
 ```java
-        implementation'io.mobitech.content_sdk:content_ui_sdk:1.0'
+        implementation'io.mobitech.content_sdk:content_ui_sdk:7.0.0'
        
                                   OR
         
-        implementation'com.github.Ray33.content_sdk:content_ui_sdk:1.0'
+        implementation'com.github.Ray33.content_sdk:content_ui_sdk:7.0.0'
 
 
 ```
