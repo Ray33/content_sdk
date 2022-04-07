@@ -11,11 +11,9 @@ The project is divided into 2 moduels:
    this project, add to your gradle.build the dependency:
 
 ```java
+     
         implementation'io.mobitech.content_sdk:content_api_sdk:7.0.0'
 
-                                 OR
-
-        implementation'com.github.Ray33.content_sdk:content_api_sdk:7.0.0'
 
 
 ```
@@ -23,7 +21,7 @@ The project is divided into 2 moduels:
 Then initiate the module once:
 
 ```java
-recommendationService=RecommendationService.build(getApplicationContext(),getBaseContext().getString(R.string.MOBITECH_CONTENT_PUBLISHER_API_KEY),advertId);
+        recommendationService=RecommendationService.build(getApplicationContext(),getBaseContext().getString(R.string.MOBITECH_CONTENT_PUBLISHER_API_KEY),advertId);
 ```
 
 Then use it:
@@ -42,12 +40,9 @@ Then use it:
    layour. The usage of the content UI SDK is demonstrated here:
 
 ```java
+      
         implementation'io.mobitech.content_sdk:content_ui_sdk:7.0.0'
-       
-                                  OR
         
-        implementation'com.github.Ray33.content_sdk:content_ui_sdk:7.0.0'
-
 
 ```
 
