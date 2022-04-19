@@ -38,6 +38,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created on 19.11.2017
@@ -496,7 +497,7 @@ public class RecommendationService {
     private Retrofit initializeRetrofitIpifyBuilder() {
         return new Retrofit.Builder()
                 .baseUrl(IpifyAPI.BASE_URL)
-                .addConverterFactory(LoganSquareConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
                 .client(RetrofitUtil.initHttpClient(true))
                 .build();
     }
