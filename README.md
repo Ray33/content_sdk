@@ -12,7 +12,7 @@ The project is divided into 2 moduels:
 
 ```java
      
-        implementation'io.mobitech.content_sdk:content_api_sdk:7.0.0'
+        implementation'io.mobitech.content_sdk:content_api_sdk:7.0.1'
 
 
 
@@ -41,7 +41,7 @@ Then use it:
 
 ```java
       
-        implementation'io.mobitech.content_sdk:content_ui_sdk:7.0.0'
+        implementation'io.mobitech.content_sdk:content_ui_sdk:7.0.1'
         
 
 ```
